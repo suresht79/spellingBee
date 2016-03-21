@@ -15,8 +15,11 @@ public class ContentRepository {
 	public boolean saveWords(String word, String wordLevel, long userId) {
 		boolean result = true;//service.saveWords(word, wordLevel, userId);
 		//repository.saveWords(word,  wordLevel, userId);
-		Map map = jdbcTemplate.queryForMap("select * from ContentMaster");
+		//Map<String, Object> map = jdbcTemplate.queryForMap("select userId, userName, role from User");
+		jdbcTemplate.execute("insert into ContentMaster(Word, WordLevel, Status, UpdatedBy)" 
+				+ " values('" + word +  "','" + wordLevel + "'," + "'NEW'" + "," + userId + ")");
+		Map<String, Object> map = jdbcTemplate.queryForMap("select * from ContentMaster");
+		
 		return result;
 	}
-	
 }
