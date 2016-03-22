@@ -1,0 +1,16 @@
+spring:
+  application:
+     name: auth-app
+  datasource:
+     driverClassName : com.mysql.jdbc.Driver
+     url : jdbc:mysql://localhost:3306/world?useSSL=false
+     username : root
+     password : 1234
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9090/eureka/
+
+server:
+  port: 8083
