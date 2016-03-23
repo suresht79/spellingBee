@@ -2,6 +2,7 @@ package com.citi.spellingBee.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.citi.spellingBee.domain.WordContent;
 import com.citi.spellingBee.service.ContentService;
+import com.citi.spellingBee.util.UserNotValidException;
 
 @RestController
 public class ContentController {
@@ -19,19 +21,14 @@ public class ContentController {
 	@Autowired
 	ContentService service;
 
-	@RequestMapping(value = "/saveWords", method = RequestMethod.POST, 
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE
-			)
+	@RequestMapping(value = "/saveWords", method = RequestMethod.POST)
 	public Boolean saveWords(@RequestBody WordContent wordContent) {
 		boolean result = service.saveWords(wordContent);
 		return result;
 	}
 	
-	@RequestMapping(value = "/getWords", method = RequestMethod.GET, 
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public List<WordContent> getWords(@RequestParam(name = "userId") String userId) {
+	@RequestMapping(value = "/getWords", method = RequestMethod.GET)
+	public List<WordContent> getWords(@RequestParam(name = "userId") String userId) throws UserNotValidException{
 		List<WordContent> wordContent = service.getWords(userId);
 		return wordContent;
 	}
