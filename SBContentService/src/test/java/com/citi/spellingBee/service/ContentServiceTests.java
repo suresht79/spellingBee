@@ -1,6 +1,7 @@
 package com.citi.spellingBee.service;
 
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -50,9 +51,18 @@ private ContentRepository repository;
 	
 	@Test
 	public void saveWords(){
-		/*when(this.repository.saveWords(any(String.class), any(String.class), any(Long.class)))
-		.thenReturn(true);*/
-		//Assert.assertTrue(this.service.saveWords("test","easy",1));
+		WordContent wordContent = new WordContent();
+		wordContent.setUserId("wordsmith");
+		wordContent.setWord("Word1");
+		wordContent.setWordLevel("Easy");
+		
+		when(restTemplate.getForObject(
+				  Matchers.anyString(), Matchers.eq(String.class))
+				).thenReturn("wordsmith_role");
+		
+		when(this.repository.saveWords(any(WordContent.class)))
+		.thenReturn(true);
+		assertTrue(this.service.saveWords(wordContent));
 	}
 	
 	@Test
@@ -79,7 +89,7 @@ private ContentRepository repository;
     }
 	
 	@Test
-    public void getWordsInvalidUserTest() throws Exception {
+    public void getWordsForInvalidUserTest() throws Exception {
 		//Test for handling exceptions
 		try{
 			List<WordContent> listContent2 = this.service.getWords("");

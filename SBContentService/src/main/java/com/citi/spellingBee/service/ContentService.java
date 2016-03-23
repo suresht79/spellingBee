@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import com.citi.spellingBee.domain.WordContent;
 import com.citi.spellingBee.domain.WordPronunciation;
 import com.citi.spellingBee.repository.ContentRepository;
+import com.citi.spellingBee.util.AuthServiceHystrixClient;
 import com.citi.spellingBee.util.ContentStatus;
 import com.citi.spellingBee.util.UserNotValidException;
 
@@ -25,13 +26,15 @@ public class ContentService {
 	@LoadBalanced
 	RestTemplate restTemplate;
 
-	String AUTH_SERVICE_ENDPOINT="http://AUTH-APP/authenticateUser";
+	@Autowired
+	private AuthServiceHystrixClient authServiceHystrixClient;
+	
 	String PRONUNCIATION_SERVICE_ENDPOINT="http://PRONUNCIATION-APP/savePronunciation";
 	
 	public boolean saveWords(WordContent wordContent) {
 		boolean result = true;//
 
-	    String role = getRole(wordContent.getUserId());
+	    String role = authServiceHystrixClient.getRole(wordContent.getUserId());
 		switch(role){
 			case "wordsmith_role": {
 				if(wordContent.getWordId() == null){
@@ -96,9 +99,14 @@ public class ContentService {
 		return restTemplate.postForObject( PRONUNCIATION_SERVICE_ENDPOINT, wordPronunciation, Boolean.class);
 	}
 
+	/*@HystrixCommand(fallbackMethod = "getRole")
 	public String getRole(String userId) {
 		return restTemplate.getForObject(AUTH_SERVICE_ENDPOINT + "?userId=" + userId, String.class);
 	}
+	
+	public String getRole() {
+		return "reviewer_role";
+	}*/
 	
 	public List<WordContent> getWords(String userId) throws UserNotValidException{
 		boolean result = true;
@@ -107,7 +115,7 @@ public class ContentService {
 			throw new UserNotValidException();
 		}
 		List<WordContent> wordContentList = null;
-		String role = getRole(userId);
+		String role = authServiceHystrixClient.getRole(userId);
 		switch(role){
 			case "wordsmith_role": {
 				List<String> status = new ArrayList<String>();

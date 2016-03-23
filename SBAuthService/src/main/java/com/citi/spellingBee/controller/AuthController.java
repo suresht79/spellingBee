@@ -25,7 +25,7 @@ public class AuthController {
 	@RequestMapping(value = "/authenticateUser", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE
 			)
-	public String authenticateUser(@RequestParam String userId) {
+	public String authenticateUser(@RequestParam String userId) throws Exception{
 		String result = userMap.get(userId);
 		return result;
 	}
